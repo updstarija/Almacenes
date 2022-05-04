@@ -1,0 +1,150 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="padding:2%">
+    <div class="card shadow">
+        <div class="card-header text-light" style="background-color: #00377C">
+            <h4>Cargos</h4>
+        </div>
+        <div class="card-body">
+
+            <div id="cargando" class="text-center text-primary">
+                <div class="spinner-border" style="width: 5rem; height: 5rem; margin:2%" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <h5 class="d-flex justify-content-center">Cargando...</h5>
+            </div>
+            <div class="table-responsive mt-2 mb-2" id="contenido">
+                <small>Se visualiza un detalle de la lista de cargos</small>
+                <table id="tCargo" class="table table-striped table-bordered display" style="width:100%"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalCargo" tabindex="-1">
+    <form id="FrmCargo" name="FrmCargo">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5 class="modal-title" id="Titulo"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="hidden" id="IdCargo" name="Id" class="form-control" />
+                        <label for="inputContraseña" class="form-label">Cargos:</label>
+                        <input type="text" class="form-control" id="Nombre" name="Nombre" placeholder="Introduzca el nombre del cargo" aria-describedby="Nombre">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="Save()"><i class="far fa-check-circle"></i> Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+     tabla = $("#tCargo").DataTable({
+        columns: [
+            { title: "Nro", width: '2%' },
+            { title: "Nombre", width: '93%' },
+             { title: "<button  class='form-control btn btn-primary text-nowrap' id='BtnAgregar' onclick='RoleAdd()' data-bs-toggle='modal' data-bs-target='#ModalCargo'>Nuevo <i class='fa fa-plus-circle' aria-hidden='true'></i></button>", width: '5%' }
+        ]
+    });
+    $("#cargando").show();
+    $("#contenido").hide();
+    $(document).ready(function () {
+        setTimeout(function () {
+            $("#cargando").hide();
+            $("#contenido").show();
+            UpdateTable();
+        }, 1000);
+    });
+    function UpdateTable()
+    {
+        $.post('@Url.Action("Get","Cargo")', function (o) {
+            tabla.destroy();
+            dataset = o;
+            tabla = $("#tCargo").DataTable({
+                data: dataset,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+                },
+                columns: [{ width: '2%' }, { width: '93%' }, { orderable: false, width: '5%' }]
+            });
+        });
+    }
+
+    function RoleAdd() {
+        $("#Titulo").html("Nuevo Cargo");
+        $("#FrmCargo")[0].reset();
+        $("#IdCargo").val(0)
+    }
+
+    function Save() {
+        var o = $("#FrmCargo").serialize();
+        $.post('@Url.Action("Save","Cargo")', o, function (s) {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalCargo").modal('hide');
+                    UpdateTable();
+                    break;
+                case 2:
+                    Toast(s.msj, 'success');
+                    $("#ModalCargo").modal('hide');
+                    UpdateTable();
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+                default:
+                    Toast(s.msj, 'warning');
+                    break;
+            }
+        })
+    }
+
+    function Edit(id) {
+        $.getJSON('@Url.Action("GetId","Cargo")', { Id: id }, function (o) {
+            $("#IdCargo").val(o.Id);
+            $("#Nombre").val(o.Nombre);
+        });
+    }
+
+    function Delete(id) {
+        $("#TextoEliminar").html("¿Realmente desea eliminar este cargo? Este proceso no se puede deshacer.")
+        $("#IdCargo").val(id);
+    }
+
+    function ConfirmDelete() {
+        $.post('@Url.Action("Delete","Cargo")', { Id: $("#IdCargo").val() }, function (s) {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalEliminar").modal('hide');
+                    UpdateTable();
+                    break;
+                case 2:
+                    Toast(s.msj, 'success');
+                    $("#ModalEliminar").modal('hide');
+                    UpdateTable();
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+                default:
+                    Toast(s.msj, 'warning');
+                    $("#ModalEliminar").modal('hide');
+                    break;
+            }
+        })
+    }
+
+</script>

@@ -1,0 +1,401 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div style="padding:2%">
+    <div class="card shadow">
+        <div class="card-header text-light" style="background-color: #00377C">
+            <h4>Solicitudes</h4>
+        </div>
+        <div class="card-body">
+            <div id="cargando" class="text-center text-primary">
+                <div class="spinner-border" style="width: 5rem; height: 5rem; margin:2%" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <h5 class="d-flex justify-content-center">Cargando...</h5>
+            </div>
+            <div class="table-responsive mt-2 mb-2" id="contenido">
+                <small>Se visualiza un detalle de la lista de solicitudes</small>
+                <table id="tSolicitud" class="table table-striped table-bordered display" style="width:100%"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalSolicitud" tabindex="-1">
+    <form id="FrmSolicitud" name="FrmSolicitud">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5 class="modal-title">Detalle de Solicitud</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group mb-3">
+                                <label><b>Fecha:</b></label>
+                                <p id="Fecha"></p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group mb-3 text-break">
+                                <label><b>Solicitante:</b></label>
+                                <p id="Solicitante"></p>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group mb-3 text-break">
+                                <input type="hidden" id="IdSolicitud" name="Id" class="form-control" />
+                                <label><b>Justificación:</b></label>
+                                <p id="Descripcion"></p>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-break" id="divRespu">
+                            <div class="form-group mb-3">
+                                <label><b>Observaciones:</b></label>
+                                <p id="Observaciones"></p>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="col-sm-12 mt-2">
+                            <div class="table-responsive-lg">
+                                <table class="table" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" width="5%">#</th>
+                                            <th scope="col" width="30%">Material</th>
+                                            <th scope="col" width="25%">Unidad</th>
+                                            <th scope="col" width="15%">Cant Solicitada</th>
+                                            <th scope="col" width="15%">Cant Aprobada</th>
+                                            <th scope="col" width="5%" class="text-center">Opciones</th>
+                                            <th scope="col" width="5%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tMateriales">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cerrar</button>
+                    <div id="btns">
+                        <button type="button" class="btn btn-outline-danger" onclick="Deny()"><i class="fas fa-times"></i> Rechazar</button>
+                        <button type="button" class="btn btn-outline-success" onclick="SaveSend()"><i class="far fa-share-square"></i> Aprobar y Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="modal fade" id="ModalEnviar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div id="idCabecera" class="modal-header d-flex justify-content-center">
+                <h4 class="modal-title text-light text-center">¿Está seguro?</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body text-center">
+                    <p style="font-size:20px" id="idMensaje"></p>
+                </div>
+                <div class="col-sm-12">
+                    <div class="form-group mb-3">
+                        <label>Observaciones:</label>
+                        <textarea class="form-control" id="Respuesta" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" onclick="Cancel()"><i class="fas fa-ban"></i> Cancelar</button>
+                <button id="btnDeny" type="button" class="btn btn-outline-success" onclick="ConfirmDeny()"><i class="fas fa-times"></i> Rechazar</button>
+                <button id="btnSend" type="button" class="btn btn-outline-success" onclick="ConfirmSend()"><i class="far fa-check-circle"></i> Aceptar</button>
+            </div>
+            <p class="text-center"></p>
+        </div>
+    </div>
+</div>
+<script>
+    tabla = $("#tSolicitud").DataTable({
+        columns: [
+            { title: "Nro", width: '5%' },
+            { title: "Solicitante", width: '30%' },
+            { title: "Fecha", width: '10%' },
+            { title: "Justificación", width: '20%' },
+            { title: "Estado", width: '10%' },
+            { title: "Rechazado/Aprobado", width: '15%' },
+            { title: `<select class="form-select" id="selectFilterByState" onchange="FilterByState()"><option value="6" selected>Todas</option><option value="4">Aprobadas</option><option value="5">Ap. Sin Entregar</option><option value="1">Rechazadas</option><option value="3">Pendientes</option></select>`, width: '10%'}
+        ]
+    });
+    $("#cargando").show();
+    $("#contenido").hide();
+    $(document).ready(function () {
+        setTimeout(function () {
+            $("#cargando").hide();
+            $("#contenido").show();
+            UpdateTable();
+        }, 1000);
+    });
+
+    function loadTable(o) {
+        tabla.destroy();
+        dataset = o;
+        tabla = $("#tSolicitud").DataTable({
+            data: dataset,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+            },
+            columns: [
+                { width: '5%'},
+                { width: '30%' },
+                { orderable: false, width: '10%' },
+                { width: '20%' },
+                { width: '10%' },
+                { width: '15%' },
+                { orderable: false, width: '10%' }
+            ]
+        });
+    }
+
+    function UpdateTable()
+    {
+        $.post('@Url.Action("Get","AdmSolicitud")', function (o) {
+            loadTable(o)
+        });
+    }
+
+    function FilterByState(){
+        var filter = $("#selectFilterByState").val();
+        if (filter==6) {
+            UpdateTable();
+        }
+        else {
+            $.getJSON('@Url.Action("GetListByState", "AdmSolicitud")', { Filter: filter }, function (o) {
+                loadTable(o);
+                $("#selectFilterByState").val(filter);
+            });
+        }
+
+    }
+
+    function UpdateStateSolicitud(id) {
+        $.confirm({
+            icon: 'fas fa-exclamation-triangle',
+            title: 'Actualizar estado de solicitud',
+            theme: 'modern',
+            content: '¿Esta seguro, se actualizara el estado a PENDIENTE?',
+            type: 'orange',
+            typeAnimated: true,
+            animation: 'rotateYR',
+            closeAnimation: 'scale',
+            buttons: {
+                confirm: {
+                    text: 'Confirmar',
+                    btnClass: 'btn-warning',
+                    action: function () {
+                        $.getJSON('@Url.Action("UpdateStateSolicitud", "AdmSolicitud")', { Id: id }, function (s) {
+                            FilterByState();
+                        });
+                    }
+                },
+                close: {
+                    text: 'Cancelar',
+                    action: function () {
+                    }
+                }
+            }
+        });
+    }
+
+    function Check(Id) {
+        $("#divRespu").addClass('d-none');
+        $("#divRespu").removeClass('hidden');
+        $("#btns").removeClass('d-none');
+        $("#btns").addClass('hidden');
+        $("#Respuesta").val("");
+        $("#Fecha").html("");
+        $("#Solicitante").html("");
+        $("#Descripcion").html("");
+        $.getJSON('@Url.Action("GetId", "AdmSolicitud")', { Id: Id }, function (o) {
+            $("#IdSolicitud").val(o.Id);
+            $("#Fecha").append(o.Fecha);
+            $("#Solicitante").append(o.Solicitante);
+            $("#Descripcion").append(o.Descripcion);
+            GetMateriales();
+        });
+    }
+
+    function GetMateriales() {
+        $("#tMateriales").html("");
+        $.getJSON('@Url.Action("GetMateriales", "AdmSolicitud")', { Id: $("#IdSolicitud").val() }, function (o) {
+            $("#tMateriales").html(o);
+        });
+    }
+
+    function Accept(Id) {
+        var verificarCheck = document.getElementById("Check" + Id + "").checked ? true : false;
+        var cant = document.getElementById("Cantidad" + Id + "").value;
+        //2=Aprobado
+        //3=Rechazado
+        var Estado = verificarCheck == true ? 2 : 3;
+        $.getJSON('@Url.Action("Accept", "AdmSolicitud")', { Id: Id, CantidadAprobada: $("#Cantidad" + Id + "").val(), Estado}, function (o) {
+            document.getElementById("Cantidad" + Id + "").value = verificarCheck == false ? 0 : o;
+            if (Estado==2) {
+                document.getElementById("btnEspecif" + Id + "").disabled = false;
+            }
+            else {
+                document.getElementById("btnEspecif" + Id + "").disabled = true;
+            }
+        });
+    }
+
+    function UpdateCantidad(Id) {
+        var verificarCheck = document.getElementById("Check" + Id + "").checked ? true : false;
+        var cant = document.getElementById("Cantidad" + Id + "").value;
+        if (verificarCheck==true) {
+            var Estado = verificarCheck == true ? 2 : 3;
+            $.getJSON('@Url.Action("Accept", "AdmSolicitud")', { Id: Id, CantidadAprobada: $("#Cantidad" + Id + "").val(), Estado}, function (o) {
+                document.getElementById("Cantidad" + Id + "").value = o;
+            });
+        }
+    }
+
+    function VerificarChecks() {
+        var verif = false;
+        var longitud = document.getElementsByName('CheckCantidadAprobada[]').length;
+        for (var i = 0; i < longitud; i++) {
+            var v = document.getElementsByName('CheckCantidadAprobada[]')[i].checked ? true : false;
+            if (v!=false) {
+                verif = true;
+            }
+        }
+        return verif;
+    }
+
+    function CambiarEspecificacion(Id) {
+        $.getJSON('@Url.Action("ChangueEspecificacion", "AdmSolicitud")', { Id: Id}, function (o) {
+            document.getElementById("Especific" + Id + "").innerText = o;
+        });
+    }
+
+    function SaveSend() {
+        if (VerificarChecks()) {
+            $("#btnSend").removeClass('d-none');
+            $("#btnSend").addClass('hidden');
+            $("#btnDeny").addClass('d-none');
+            $("#btnDeny").removeClass('hidden');
+            $("#idCabecera").removeClass('bg-danger');
+            $("#idCabecera").addClass('bg-success');
+            $("#idMensaje").html("¿Realmente desea enviar esta solicitud? Este proceso no se puede deshacer.");
+            $("#ModalSolicitud").modal('hide');
+            $("#ModalEnviar").modal('show');
+        }
+        else {
+            Toast('Por favor, debe aprobar al menos uno.', 'warning');
+        }
+    }
+
+    function Cancel() {
+        $("#ModalEnviar").modal('hide');
+        $("#ModalSolicitud").modal('show');
+    }
+
+    function ConfirmSend() {
+        $.getJSON('@Url.Action("ConfirmSend", "AdmSolicitud")', { Id: $("#IdSolicitud").val(), Respuesta: $("#Respuesta").val() }, function (s) {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalEnviar").modal('hide');
+                    FilterByState();
+                    //UpdateTable();
+                    break;
+                case 4:
+                    Toast(s.msj, 'danger');
+                    $("#ModalEnviar").modal('hide');
+                    $("#ModalSolicitud").modal('show');
+                    break;
+                case 5:
+                    Toast(s.msj, 'danger');
+                    break;
+            }
+        });
+    }
+
+    function Deny() {
+        $("#btnDeny").removeClass('d-none');
+        $("#btnDeny").addClass('hidden');
+        $("#btnSend").addClass('d-none');
+        $("#btnSend").removeClass('hidden');
+        $("#idCabecera").addClass('bg-danger');
+        $("#idCabecera").removeClass('bg-success');
+        $("#idMensaje").html("¿Realmente desea rechazar esta solicitud? Este proceso no se puede deshacer.");
+        $("#ModalSolicitud").modal('hide');
+        $("#ModalEnviar").modal('show');
+    }
+
+    function ConfirmDeny() {
+        $.getJSON('@Url.Action("ConfirmDeny", "AdmSolicitud")', { Id: $("#IdSolicitud").val(), Respuesta: $("#Respuesta").val() }, function (s) {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalEnviar").modal('hide');
+                    FilterByState();
+                    //UpdateTable();
+                    break;
+                case 4:
+                    Toast(s.msj, 'danger');
+                    $("#ModalEnviar").modal('hide');
+                    $("#ModalSolicitud").modal('show');
+                    break;
+            }
+        });
+    }
+
+    function Detail(Id) {
+        $("#btns").addClass('d-none');
+        $("#btns").removeClass('hidden');
+        $("#Respuesta").val("");
+        $("#Fecha").html("");
+        $("#Solicitante").html("");
+        $("#Observaciones").html("");
+        $("#Descripcion").html("");
+        $.getJSON('@Url.Action("GetId", "AdmSolicitud")', { Id: Id }, function (o) {
+            $("#IdSolicitud").val(o.Id);
+            $("#Fecha").append(o.Fecha);
+            $("#Solicitante").append(o.Solicitante);
+            $("#Descripcion").append(o.Descripcion);
+            if (o.Respuesta != "") {
+                $("#divRespu").removeClass('d-none');
+                $("#divRespu").addClass('hidden');
+                $("#Observaciones").append(o.Respuesta);
+            }
+            else {
+                $("#divRespu").addClass('d-none');
+                $("#divRespu").removeClass('hidden');
+            }
+            GetMateriales();
+        });
+    }
+
+    function UpdateMaterialState(Id) {
+        var verificarCheck = document.getElementById("CheckMaterialState" + Id + "").checked ? true : false;
+        //2=Aprobado
+        //4=Entregado
+        var Estado = verificarCheck == true ? 4 : 2;
+        $.getJSON('@Url.Action("UpdateMaterialState", "AdmSolicitud")', { Id: Id, Estado}, function (o) {
+            if (o==4) {
+                Toast("Entregado", 'success');
+            }
+            else {
+                Toast("Pendiente", 'warning');
+            }
+            FilterByState();
+        });
+    }
+</script>

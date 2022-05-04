@@ -1,0 +1,168 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="padding:2%">
+    <div class="card shadow">
+        <div class="card-header text-light" style="background-color: #00377C">
+            <h4>Usuarios</h4>
+        </div>
+        <div class="card-body">
+
+            <div id="cargando" class="text-center text-primary">
+                <div class="spinner-border" style="width: 5rem; height: 5rem; margin:2%" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <h5 class="d-flex justify-content-center">Cargando...</h5>
+            </div>
+            <div class="table-responsive mt-2 mb-2" id="contenido">
+                <small>Se visualiza un detalle de la lista de usuarios</small>
+                <table id="tUsuario" class="table table-striped table-bordered display" style="width:100%"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalUsuario" tabindex="-1">
+    <form id="FrmUsuario" name="FrmUsuario">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5 class="modal-title">Editar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="hidden" id="IdUsuario" name="Id" class="form-control" />
+                        <label for="inputNombreusu" class="form-label">Usuario:</label>
+                        <input type="email" class="form-control" id="Nomusu" name="Nomusu" placeholder="Introduzca un correo" aria-describedby="Nombreusu">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputContraseña" class="form-label">Contraseña:</label>
+                        <input type="password" class="form-control" id="Password" name="Password" placeholder="Introduzca la contraseña" aria-describedby="Password" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputContraseña" class="form-label">Tipo de Usuario:</label>
+                        <select class="form-select" id="Tipo" name="IdTtipo" aria-label="Default select example">
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="Save()"><i class="far fa-save"></i> Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    tabla = $("#tUsuario").DataTable({
+        columns: [
+            { title: "Nro", width: '2%' },
+            { title: "Persona", width: '55%' },
+            { title: "Usuario", width: '33%' },
+            { title: "<p class='text-center py-0 my-0'>Opciones</p>", width: '10%' }
+        ]
+    });
+    $("#cargando").show();
+    $("#contenido").hide();
+    $(document).ready(function () {
+        $.getJSON('@Url.Action("GetAll","Tipo")', function (o) {
+            $("#Tipo").html("");
+            var option = "<option value='0' selected>Seleccione una opción</option>";
+            $("#Tipo").append(option);
+            for (var i = 0; i < o.length; i++) {
+                option = "<option value=" + o[i].Id + " >" + o[i].Nombre + "</option>";
+                $("#Tipo").append(option);
+            }
+        });
+        setTimeout(function () {
+            $("#cargando").hide();
+            $("#contenido").show();
+            UpdateTable();
+        }, 1000);
+    });
+    function UpdateTable()
+    {
+        $.post('@Url.Action("Get","Usuario")', function (o) {
+            tabla.destroy();
+            dataset = o;
+            tabla = $("#tUsuario").DataTable({
+                data: dataset,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+                },
+                columns: [{ width: '2%' }, { width: '55%' }, { width: '33%' }, { orderable: false, width: '10%' }
+                ]
+            });
+        });
+    }
+
+     function Edit(id) {
+        $.getJSON('@Url.Action("GetId","Usuario")', { Id: id }, function (o) {
+            $("#IdUsuario").val(o.Id);
+            $("#Nomusu").val(o.Nomusu);
+            $("#Password").val("NULL");
+            $("#Tipo").val(o.Idtipo);
+        });
+    }
+
+    function Save() {
+        var o = $("#FrmUsuario").serialize();
+        $.post('@Url.Action("Save","Usuario")', o, function (s)
+        {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalUsuario").modal('hide');
+                    UpdateTable();
+                    break;
+                case 2:
+                    Toast(s.msj, 'success');
+                    $("#ModalUsuario").modal('hide');
+                    UpdateTable();
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+                default:
+                    Toast(s.msj, 'warning');
+                    break;
+            }
+        })
+    }
+
+    function Delete(id) {
+        $("#TextoEliminar").html("¿Realmente desea eliminar a este usuario? Este proceso no se puede deshacer.");
+        $("#IdUsuario").val(id);
+    }
+
+    function ConfirmDelete() {
+        $.post('@Url.Action("Delete","Usuario")', { Id: $("#IdUsuario").val() }, function (s) {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalEliminar").modal('hide');
+                    UpdateTable();
+                    break;
+                case 2:
+                    Toast(s.msj, 'success');
+                    $("#ModalEliminar").modal('hide');
+                    UpdateTable();
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+                default:
+                    Toast(s.msj, 'warning');
+                    $("#ModalEliminar").modal('hide');
+                    break;
+            }
+        })
+    }
+
+</script>

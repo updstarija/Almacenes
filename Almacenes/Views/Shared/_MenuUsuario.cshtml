@@ -1,0 +1,34 @@
+﻿<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #00377C;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="@Url.Action("Index","HomeUsuario")">UPDS</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarAlmacen" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-share-square"></i> Solicitud
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="@Url.Action("Index","Solicitud")">Solicitud</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav justify-content-end">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user"></i>
+                        @User.Identity.Name
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="@Url.Action("Perfil","Usuario")">Ver Perfil</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="d-flex" method="post" action="@Url.Action("Logout","Inicio")">
+                <button class="btn btn-outline-light" type="submit">Salir</button>
+            </form>
+        </div>
+    </div>
+</nav>

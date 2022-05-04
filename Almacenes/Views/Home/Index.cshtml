@@ -1,0 +1,160 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid p-4 bg-light">
+    <h2>Bienvenido</h2>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="card shadow" style="height:450px">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">ALMACENES UPDS</h5>
+                    <p class="card-text">Automatizacíon de las solicitudes material y administración del almacén.</p>
+                    <img src="~/Content/img/Person.png" class="img-fluid" style="height:350px; width:350px" />
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            Ultimos 5 Solicitantes
+                        </div>
+                        <div class="card-body" style="height:250px">
+                            <ul class="list-group" id="Top">
+                            </ul>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <a href="@Url.Action("Index","AdmSolicitud")" class="card-link">Ver mas</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            Estadísticas
+                        </div>
+                        <div class="card-body" style="height:250px" id="estadisticas">
+
+                        </div>
+                        <div class="card-footer text-muted">
+                            <a href="@Url.Action("Index","Reporte")"  class="card-link">Ver mas</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 mt-3">
+                    <div class="card ">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="float-left col-6">
+                                    <i class="far fa-thumbs-up text-success fa-3x"></i>
+                                </div>
+                                <div class="text-end float-right col-6">
+                                    <h3 id="aprobadas"></h3>
+                                    <small>Aprobadas</small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 mt-3">
+                    <div class="card ">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="float-left col-6">
+                                    <i class="fas fa-hourglass-start text-primary fa-3x"></i>
+                                </div>
+                                <div class="text-end float-right col-6">
+                                    <h3 id="pendientes"></h3>
+                                    <small>Pendientes</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 mt-3">
+                    <div class="card ">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="float-left col-6">
+                                    <i class="far fa-thumbs-down text-danger fa-3x"></i>
+                                </div>
+                                <div class="text-end float-right col-6">
+                                    <h3 id="rechazadas"></h3>
+                                    <small>Rechazadas</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+
+                <span class="text-muted">© 2021 Company, Inc</span>
+
+            </div>
+            <div class="col-6 float-right text-end">
+                <a class="text-muted" href="#"><i class="fab fa-instagram"></i></a>
+                <a class="text-muted" href="#"><i class="fab fa-facebook-square"></i></a>
+                <a class="text-muted" href="#"><i class="fab fa-microsoft"></i></a>
+            </div>
+
+        </div>
+    </div>
+</footer>
+
+<script>
+    $(document).ready(function () {
+        Top5();
+        Statistics();
+        CantAprobadas();
+        CantPendientes();
+        CantRechazadas();
+    });
+
+    function Top5() {
+        $("#Top").html("");
+        $.getJSON('@Url.Action("Top5","Home")', function (o) {
+            $("#Top").html(o);
+        });
+    }
+
+    function Statistics() {
+        $("#estadisticas").html("");
+        $.getJSON('@Url.Action("Statistics","Home")', function (o) {
+            $("#estadisticas").html(o);
+        });
+    }
+
+    function CantAprobadas() {
+        $.getJSON('@Url.Action("CantAprobadas", "Home")', function (o) {
+            $("#aprobadas").html(o);
+        });
+    }
+
+    function CantPendientes() {
+        $.getJSON('@Url.Action("CantPendientes", "Home")', function (o) {
+            $("#pendientes").html(o);
+        });
+    }
+
+    function CantRechazadas() {
+        $.getJSON('@Url.Action("CantRechazadas", "Home")', function (o) {
+            $("#rechazadas").html(o);
+        });
+    }
+</script>
+

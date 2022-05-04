@@ -1,0 +1,170 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="padding:2%">
+    <div class="card shadow">
+        <div class="card-header text-light" style="background-color: #00377C">
+            <h4>Departamentos</h4>
+        </div>
+        <div class="card-body">
+            <div id="cargando" class="text-center text-primary">
+                <div class="spinner-border" style="width: 5rem; height: 5rem; margin:2%" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <h5 class="d-flex justify-content-center">Cargando...</h5>
+            </div>
+            <div class="table-responsive mt-2 mb-2" id="contenido">
+                <small>Se visualizan los departamentos</small>
+                <table id="tDepartamentos" class="table table-striped table-bordered display" style="width:100%"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalDepartamento" tabindex="-1">
+    <form method="POST" id="FrmDepartamento" name="FrmDepartamento">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5 class="modal-title" id="Titulo"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="hidden" id="IdDepartamento" name="Id" class="form-control" />
+                        <label for="Nombre" class="form-label">Departamento:</label>
+                        <input type="text" class="form-control" id="Nombre" name="Nombre" placeholder="Introduzca el nombre del departamento" aria-describedby="Nombre">
+                    </div>
+                    <div class="mb-3">
+                        <label for="Descripcion">Descripción:</label>
+                        <textarea class="form-control" id="Descripcion" name="Descripcion" rows="3" maxlength="500"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="Save()"><i class="far fa-check-circle"></i> Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    tabla = $("#tDepartamentos").DataTable({
+        columns: [
+            { title: "Nro", width: '10%' },
+            { title: "Nombre", width: '35%' },
+            { title: "Descripcion", width: '35%' },
+            { title: "Funcionarios", width: '10%' },
+            { title: "<button  class='form-control btn btn-primary' id='BtnAgregar' onclick='DepartamentAdd()' data-bs-toggle='modal' data-bs-target='#ModalDepartamento'>Nuevo <i class='fa fa-plus-circle' aria-hidden='true'></i></button>", width: '10%' }
+        ]
+    });
+    $("#cargando").show();
+    $("#contenido").hide();
+    $(document).ready(function () {
+        setTimeout(function () {
+            $("#cargando").hide();
+            $("#contenido").show();
+            UpdateTable();
+        }, 1000);
+    });
+
+    function UpdateTable()
+    {
+        $.post('@Url.Action("Get","Departamento")', function (o) {
+            tabla.destroy();
+            dataset = o;
+            tabla = $("#tDepartamentos").DataTable({
+                data: dataset,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+                },
+                columns: [{ width: '10%' }, { width: '35%' }, { width: '35%' }, { width: '10%' }, { orderable: false, width: '10%' }]
+            });
+        });
+    }
+    function DepartamentAdd() {
+        $("#Titulo").html("Nuevo Departamento");
+        $("#FrmDepartamento")[0].reset();
+        $("#IdDepartamento").val(-1);
+    }
+
+    function Save() {
+        var o = $("#FrmDepartamento").serialize();
+        $.post('@Url.Action("Save","Departamento")', o, function (s) {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalDepartamento").modal('hide');
+                    UpdateTable();
+                    break;
+                case 2:
+                    Toast(s.msj, 'success');
+                    $("#ModalDepartamento").modal('hide');
+                    UpdateTable();
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+                default:
+                    Toast(s.msj, 'warning');
+                    break;
+            }
+        })
+    }
+
+    function Edit(id) {
+        $("#Titulo").html("Editar Departamento");
+        $.getJSON('@Url.Action("GetId","Departamento")', { Id: id }, function (o) {
+            $("#IdDepartamento").val(o.Id);
+            $("#Nombre").val(o.Nombre);
+            $("#Descripcion").val(o.Descripcion);
+        });
+    }
+
+    function Delete(id) {
+        //$("#IdMaterial").val(id);
+        $.confirm({
+            icon: 'fas fa-exclamation-triangle',
+            title: 'Eliminar Departamento',
+            theme: 'modern',
+            content: '¿Realmente desea eliminar este departamento? Este proceso no se puede deshacer.',
+            type: 'red',
+            typeAnimated: true,
+            animation: 'rotateYR',
+            closeAnimation: 'scale',
+            buttons: {
+                confirm: {
+                    text: 'Confirmar',
+                    btnClass: 'btn-red',
+                    action: function () {
+                        $.post('@Url.Action("Delete","Departamento")', { Id: id }, function (s) {
+                            switch (s.tipo) {
+                                case 1:
+                                    Toast(s.msj, 'success');
+                                    UpdateTable();
+                                    break;
+                                case 2:
+                                    Toast(s.msj, 'success');
+                                    UpdateTable();
+                                    break;
+                                case 3:
+                                    Toast(s.msj, 'danger');
+                                    break;
+                                default:
+                                    Toast(s.msj, 'warning');
+                                    break;
+                            }
+                        });
+                    }
+                },
+                close: {
+                    text: 'Cancelar',
+                    action: function () {
+                    }
+                }
+            }
+        });
+    }
+</script>

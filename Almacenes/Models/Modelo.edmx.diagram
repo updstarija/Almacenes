@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="bd3d42e3d317420c9201c05966f6e508" Name="Diagram1">
+        <EntityTypeShape EntityType="PruebaAlmaModel.tCargo" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tDetalleMaterial" Width="1.5" PointX="10.5" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tDetalleSolicitud" Width="1.5" PointX="12.75" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tMaterial" Width="1.5" PointX="8.25" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tPersona" Width="1.5" PointX="3" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tReseteoContraseña" Width="1.5" PointX="7.5" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tSolicitud" Width="1.5" PointX="10.5" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tTipo" Width="1.5" PointX="3" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tTipoSolicitud" Width="1.5" PointX="8.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tUnidad" Width="1.5" PointX="8.25" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tUsuario" Width="1.5" PointX="5.25" PointY="3.25" IsExpanded="true" />
+        <AssociationConnector Association="PruebaAlmaModel.FK_tPersona_tCargo" ManuallyRouted="false" />
+        <AssociationConnector Association="PruebaAlmaModel.FK__tDetalleM__IdMat__48CFD27E" ManuallyRouted="false" />
+        <AssociationConnector Association="PruebaAlmaModel.FK__tDetalleM__IdUni__49C3F6B7" ManuallyRouted="false" />
+        <AssociationConnector Association="PruebaAlmaModel.FK_tDetalleSolicitud_tDetalleMateria" ManuallyRouted="false" />
+        <AssociationConnector Association="PruebaAlmaModel.FK_tDetalleSolicitud_tSolicitud" ManuallyRouted="false" />
+        <AssociationConnector Association="PruebaAlmaModel.FK_tUsuario_tPersona" ManuallyRouted="false" />
+        <AssociationConnector Association="PruebaAlmaModel.FK__tReseteoC__IdUsu__5DCAEF64" ManuallyRouted="false" />
+        <AssociationConnector Association="PruebaAlmaModel.FK_tSolicitud_tTipoSolicitud" ManuallyRouted="false" />
+        <AssociationConnector Association="PruebaAlmaModel.FK_tSolicitud_tUsuario" ManuallyRouted="false" />
+        <AssociationConnector Association="PruebaAlmaModel.FK_tUsuario_tTipo" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.sysdiagrams" Width="1.5" PointX="5.375" PointY="6.75" />
+        <EntityTypeShape EntityType="PruebaAlmaModel.tDepartamento" Width="1.5" PointX="3" PointY="0.75" />
+        <AssociationConnector Association="PruebaAlmaModel.fk_Departamento" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,359 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid p-4 bg-light">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card shadow" style="height:550px">
+                <div class="card-body">
+                    <h5 class="card-title text-primary text-center">REPORTES DE SOLICITUDES</h5>
+                    <ul class="list-group mt-5">
+                        <li class="list-group-item list-group-item-action" onclick="GetType()" data-bs-toggle='modal' data-bs-target='#ModalReporteTipo'><i class="far fa-file"></i> Por tipo de solicitud</li>
+                        <li class="list-group-item list-group-item-action" data-bs-toggle='modal' data-bs-target='#ModalReporteFechas'><i class="far fa-file"></i> Por rango de fechas</li>
+                        <li class="list-group-item list-group-item-action" onclick="ClearForm()" data-bs-toggle='modal' data-bs-target='#ModalReporteUsuario'><i class="far fa-file"></i> Por Usuarios</li>
+                        <li class="list-group-item list-group-item-action" data-bs-toggle='modal' data-bs-target='#ModalReporteListMaterials'><i class="far fa-file"></i> Lista de Materiales</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="card shadow" style="height:550px">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">ESTADÍSTICAS GENERALES</h5>
+                    <canvas id="myChart" style="width:100%; height:500px"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--modal para reporte de solicitudes por tipo-->
+<div class="modal fade" id="ModalReporteTipo" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title">Reporte por tipo de solicitdud</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Tipo de solicitud:</label>
+                    <select class="form-select" id="TipoSolicitud"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="ReportByType()"><i class="fas fa-cog"></i> Generar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--modal para reporte de solicitudes por tipo-->
+<div class="modal fade" id="ModalReporteFechas" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title">Reporte por rango de fechas</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Inicio:</label>
+                            <input type="date" class="form-control" id="FechaInicio" />
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Fin:</label>
+                            <input type="date" class="form-control" id="FechaFin" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="ReportByDate()"><i class="fas fa-cog"></i> Generar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--modal para reporte de solicitudes por usuario-->
+<div class="modal fade" id="ModalReporteUsuario" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title">Reporte por usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="mb-3">
+                            <label class="form-label">Buscar Usuario:</label>
+                            <input type="search" onkeyup="SearchUser()" class="form-control" placeholder="Introdusca el documento" id="BuscarUsuario" />
+                            <div class="list-group" style="padding-top:0" id="ListaUsuarios">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="DatosUsuario">
+                    <div class="col-sm-12">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre Completo:</label>
+                            <input type="text" class="form-control" id="NombreUsuario" disabled />
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-3">
+                            <label class="form-label">Documento:</label>
+                            <input type="text" class="form-control" id="DocumentoUsuario" disabled />
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-3">
+                            <label class="form-label">Usuario:</label>
+                            <input type="text" class="form-control" id="CorreoUsuario" disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="ReportByUser()"><i class="fas fa-cog"></i> Generar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modal para reporte de lista de materiales-->
+<div class="modal fade" id="ModalReporteListMaterials" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title">Reporte de lista de materiales</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Inicio:</label>
+                            <input type="date" class="form-control" id="FechaInicioLM"/>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-3">
+                            <label class="form-label">Fecha Fin:</label>
+                            <input type="date" class="form-control" id="FechaFinLM"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="mb-3">
+                            <label class="form-label">Especificación:</label>
+                            <select class="form-select" id="TipoEspecificacion">
+                                <option value="COMPRAR" selected>Por Comprar</option>
+                                <option value="ALMACEN">En Almacén</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="ReportListMaterials()"><i class="fas fa-cog"></i> Generar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        Statistics();
+    });
+
+    function GetType() {
+        $.getJSON('@Url.Action("GetAll","TipoSolicitud")', function (o) {
+            $("#TipoSolicitud").html("");
+            var option = "<option value='0' selected>Seleccione una opción</option>";
+            $("#TipoSolicitud").append(option);
+            for (var i = 0; i < o.length; i++) {
+                option = "<option value=" + o[i].Id + " >" + o[i].Nombre + "</option>";
+                $("#TipoSolicitud").append(option);
+            }
+        });
+    }
+
+    function Statistics() {
+        $("#estadisticas").html("");
+        $.getJSON('@Url.Action("Statistics","Reporte")', function (o) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Solicitudes'],
+                    datasets: [
+                        {
+                            label: 'Rechazadas',
+                            data: [o.Rechazadas],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)'
+                            ],
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Pendientes',
+                            data: [o.Pendientes],
+                            backgroundColor: [
+                                'rgba(54, 162, 235, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(54, 162, 235, 1)'
+                            ],
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Aprobadas',
+                            data: [o.Aprobadas],
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(75, 192, 192, 1)'
+                            ],
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Total',
+                            data: [o.Total],
+                            backgroundColor: [
+                                'rgba(153, 102, 255, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(153, 102, 255, 1)'
+                            ],
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    function ReportByType()
+    {
+        if ($("#TipoSolicitud").val() != 0) {
+            var IdTipo = $("#TipoSolicitud").val();
+            var url = '@Url.Action("ReportByType", "Reporte")' + '?IdTipo=' + IdTipo;
+            window.open(url);
+            $("#ModalReporteTipo").modal('hide');
+            //ModalReporteTipo
+        } else {
+            Toast("Debe seleccionar un tipo de solicitud", 'warning');
+        }
+    }
+
+    function ReportByDate() {
+        if ($("#FechaInicio").val() != "" || $("#FechaFin").val() != "") {
+            if ($("#FechaFin").val() > $("#FechaInicio").val()) {
+                $("#ModalReporteFechas").modal('hide');
+                var fecha1 = $("#FechaInicio").val();
+                var fecha2 = $("#FechaFin").val();
+                window.open("https://localhost:44397/Reporte/ReportByDate?fecha1=" + fecha1 + "&fecha2=" + fecha2, "_blank");
+                $("#ModalReporteFechas").modal('hide');
+                $("#FechaInicio").val("");
+                $("#FechaFin").val("");
+            } else {
+                Toast("La fecha inicio debe ser menor a la fecha fin", 'warning');
+            }
+        } else {
+            Toast("Debe seleccionar un rango de fechas", 'warning');
+        }
+    }
+
+    function ReportListMaterials() {
+        console.log("Prob");
+        if ($("#FechaInicioLM").val() != "" || $("#FechaFinLM").val() != "") {
+            if ($("#FechaFinLM").val() > $("#FechaInicioLM").val()) {
+                var especificacion = $("#TipoEspecificacion").val();
+                var fechaInicial = $("#FechaInicioLM").val();
+                var fechaf = $("#FechaFinLM").val();
+                var url = '@Url.Action("ReportListMaterials", "Reporte")' + '?especificacion=' + especificacion + '&fecha1='+fechaInicial+'&fecha2=' + fechaf;
+                window.open(url);
+                $("#ModalReporteListMaterials").modal('hide');
+                $("#FechaInicioLM").val("");
+                $("#FechaFinLM").val("");
+            }
+            else {
+                Toast("La fecha inicio debe ser menor a la fecha fin", 'warning');
+            }
+        }
+        else {
+            Toast("Debe seleccionar un rango de fechas", 'warning');
+        }
+    }
+
+    function ClearForm() {
+        $("#DatosUsuario").hide();
+        $("#BuscarUsuario").val("");
+        $("#ListaUsuarios").html("");
+        $("#NombreUsuario").html("");
+        $("#DocumentoUsuario").html("");
+        $("#CorreoUsuario").html("");
+
+    }
+
+    function SearchUser()
+    {
+        $("#DatosUsuario").hide();
+        $("#ListaUsuarios").html("");
+        $.getJSON('@Url.Action("SearchUser", "Persona")', { texto: $("#BuscarUsuario").val() }, function (d) {
+            $("#ListaUsuarios").html(d);
+        });
+    }
+
+    function SelectUser(Documento)
+    {
+
+        $("#ListaUsuarios").html("");
+        $("#DatosUsuario").show();
+        $("#BuscarUsuario").val("");
+        $.getJSON('@Url.Action("SelectUser", "Persona")', { documento: Documento }, function (o) {
+            $("#NombreUsuario").val(o.Nombre);
+            $("#DocumentoUsuario").val(o.Documento);
+            $("#CorreoUsuario").val(o.Correo);
+        });
+    }
+
+    function ReportByUser()
+    {
+        var Documento = $("#DocumentoUsuario").val();
+        if (Documento != "") {
+            $("#ModalReporteUsuario").modal('hide');
+            var url = '@Url.Action("ReportByUser", "Reporte")' + '?documento=' + Documento;;
+            window.open(url);
+            $("#ModalReporteUsuario").modal('hide');
+        } else {
+            Toast("Debe selecccionar un usuario", 'warning');
+        }
+        ClearForm();
+    }
+
+</script>

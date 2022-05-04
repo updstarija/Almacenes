@@ -1,0 +1,497 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div style="padding:2%">
+    <div class="card shadow">
+        <div class="card-header text-light" style="background-color: #00377C">
+            <h4>Solicitudes</h4>
+        </div>
+        <div class="card-body">
+            <div id="cargando" class="text-center text-primary">
+                <div class="spinner-border" style="width: 5rem; height: 5rem; margin:2%" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <h5 class="d-flex justify-content-center">Cargando...</h5>
+            </div>
+            <div class="table-responsive mt-2 mb-2" id="contenido">
+                <small>Se visualiza un detalle de la lista de solicitudes</small>
+                <table id="tSolicitud" class="table table-striped table-bordered display" style="width:100%"></table>
+            </div>
+        </div> 
+    </div>
+</div>
+
+<div class="modal fade" id="ModalSolicitud" tabindex="-1">
+    <form id="FrmSolicitud" name="FrmSolicitud">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5 class="modal-title" id="Titulo"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group mb-3">
+                        <input type="hidden" id="IdSolicitud" name="Id" class="form-control" />
+                        <label for="textareaDescripcion">Justificación</label>
+                        <textarea class="form-control" id="Descripcion" name="Descripcion" rows="3"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="inputSelect" class="form-label">Tipo de Solicitud:</label>
+                        <select class="form-select" id="TipoSolicitud" name="Idtiposolicitud" aria-label="Default select example">
+                        </select>
+                    </div>
+                    <div class="form-group ContenedorInputs">
+                        <label for="inputBuscar" class="form-label">Buscar Material</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Buscar Material" onkeyup="SearchMaterial()" id="Buscar" aria-label="Buscar Material" aria-describedby="basic-addon2">
+                            <span class="input-group-text bg-primary text-light" id="basic-addon2"><i class="fas fa-search"></i></span>
+                        </div>
+                    </div>
+                    <div class="list-group" id="ListaMateriales">
+
+                    </div>
+                    <div class="row mt-4 ContenedorInputs">
+                        <div class="col-4 mb-3">
+                            <label for="inputMaterial" class="form-label">Material:</label>
+                            <input type="text" class="form-control" id="idMaterialSeleccionado" name="idMaterialSeleccionado" hidden="hidden" />
+                            <input type="text" class="form-control" id="Material" name="Material" aria-describedby="Material" readonly>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <label for="inputUnidad" class="form-label">Unidad:</label>
+                            <input  type="text" class="form-control" id="NombreUnidad" name="NombreUnidad" hidden="hidden"/>
+                            <select class="form-select" id="IdUnidad" name="IdUnidad"></select>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <label for="inputCantidad" class="form-label">Cantidad:</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="Cantidad" name="Cantidad" min="1">
+                                <button type="button" class="btn btn-outline-primary" onclick="AddMateriales()">Agregar <i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table" width="100%">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Material</th>
+                                <th scope="col">Unidad</th>
+                                <th scope="col">Cantidad</th>
+                                <th id="nombreColumna" scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tMateriales">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                    <div class="ContenedorInputs">
+                        <button type="button" class="btn btn-outline-primary" onclick="Save()"><i class="far fa-check-circle"></i> Guardar</button>
+                        <button type="button" class="btn btn-outline-success" onclick="SaveSend()"><i class="far fa-share-square"></i> Guardar y Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal fade" id="ModalEnviar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success d-flex justify-content-center">
+                <h4 class="modal-title text-light text-center">¿Está seguro?</h4>
+            </div>
+            <div class="modal-body text-center">
+                <p style="font-size:20px">¿Realmente desea enviar esta solicitud? Este proceso no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" onclick="Cancel()"><i class="fas fa-ban"></i> Cancelar</button>
+                <button type="button" class="btn btn-outline-success" onclick="ConfirmSend()"><i class="far fa-check-circle"></i> Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    tabla = $("#tSolicitud").DataTable({
+        columns: [
+            { title: "Nro", width: '5%' },
+            { title: "Justificación", width: '35%' },
+            { title: "Fecha", width: '10%' },
+            { title: "Tipo Solicitud", width: '20%' },
+            { title: `<select class="form-select" id="selectSUFilterByState" onchange="FilterSUByState()"><option value="6" selected>Todas</option><option value="4">Aprobadas</option><option value="5">Ap. Sin Entregar</option><option value="1">Rechazadas</option><option value="3">Pendientes</option><option value="2">Guardadas</option></select>`, width: '10%' },
+            { title: "Rechazado/Aprobado", width: '10%' },
+            { title: "<button  class='form-control btn btn-primary text-nowrap' id='BtnAgregar' onclick='RequestAdd()' data-bs-toggle='modal' data-bs-target='#ModalSolicitud'>Nuevo <i class='fa fa-plus-circle' aria-hidden='true'></i></button>", width: '10%' }
+        ]
+    });
+    $("#cargando").show();
+    $("#contenido").hide();
+    $(document).ready(function () {
+        setTimeout(function () {
+            $("#cargando").hide();
+            $("#contenido").show();
+            UpdateTable();
+        }, 1000);
+    });
+
+    function loadTableSU(o) {
+        tabla.destroy();
+        dataset = o;
+        tabla = $("#tSolicitud").DataTable({
+            data: dataset,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+            },
+            columns: [{ width: '5%' }, { width: '35%' }, { width: '10%' }, { width: '20%' }, { orderable: false, width: '10%' }, { width: '10%' }, { orderable: false, width: '10%' }]
+        });
+    }
+
+    function UpdateTable()
+    {
+        $.post('@Url.Action("Get","Solicitud")', function (o) {
+            loadTableSU(o);
+        });
+    }
+
+    function FilterSUByState(){
+        var filter = $("#selectSUFilterByState").val();
+        if (filter==6) {
+            UpdateTable();
+        }
+        else {
+            $.getJSON('@Url.Action("GetListByState", "Solicitud")', { Filter: filter }, function (o) {
+                loadTableSU(o);
+                $("#selectSUFilterByState").val(filter);
+            });
+        }
+    }
+
+    function RequestAdd() {
+        GetUnidad();
+        $.getJSON('@Url.Action("GetAll","TipoSolicitud")', function (o) {
+            $("#TipoSolicitud").html("");
+            //var option = "<option value='0' selected>Seleccione una opción</option>";
+            var option = "";
+            $("#TipoSolicitud").append(option);
+            for (var i = 0; i < o.length; i++) {
+                if (o[i].Nombre.toUpperCase()=="MATERIALES") {
+                    option = "<option value=" + o[i].Id + " selected>" + o[i].Nombre + "</option>";
+                }
+                else {
+                    option = "<option value=" + o[i].Id + " >" + o[i].Nombre + "</option>";
+                }
+                $("#TipoSolicitud").append(option);
+            }
+        });
+        ActiveInputs();
+        $("#Titulo").html("Nueva Solicitud");
+        $("#FrmSolicitud")[0].reset();
+        $("#IdSolicitud").val(0);
+        $("#idMaterialSeleccionado").val(0);
+        $("#tMateriales").html("");
+        ListaMateriales = [];
+    }
+
+    function SearchMaterial() {
+        $.getJSON('@Url.Action("Buscar","Material")', { texto: $("#Buscar").val() }, function (d) {
+            $("#ListaMateriales").html(d);
+        });
+    }
+
+    function SelectMaterial(id) {
+        GetUnidad(id);
+        $("#ListaMateriales").html("");
+        $("#Buscar").val("");
+        $.getJSON('@Url.Action("GetId", "Material")', { Id: id }, function (d) {
+            $("#idMaterialSeleccionado").val(d.Id);
+            $("#Material").val(d.Nombre);
+        });
+    }
+
+    function AddMateriales() {
+        if ($("#idMaterialSeleccionado").val() != 0) {
+            if ($("#IdUnidad").val() != 0) {
+                if ($("#Cantidad").val() != 0) {
+                    var nom = "";
+                    $.getJSON('@Url.Action("GetId", "Unidad")', { Id: $("#IdUnidad").val() }, function (uni) {
+                        $.getJSON('@Url.Action("GetIdDetailMaterial", "Material")', { IdUnidad: $("#IdUnidad").val(),IdMaterial:$("#idMaterialSeleccionado").val() }, function (IdDetalleMaterial) {
+                            var cantUnid = uni.Cantidad != 1 ? " - " + uni.Cantidad : "";
+                            nom = uni.Nombre + cantUnid;
+                            var o = {
+                                Idsolicitud: $("#IdSolicitud").val(),
+                                IdDetalleMaterial: IdDetalleMaterial,
+                                NombreMaterial: $("#Material").val(),
+                                CantidadSolicitada: $("#Cantidad").val(),
+                                NombreUnidad: nom,
+                                IdUnidad: $("#IdUnidad").val(),
+                                Especificacion:"COMPRAR",
+                            };
+                            if ($("#IdSolicitud").val() == 0) {
+                                ListaMateriales.push(o);
+                                GetMateriales();
+                            }
+                            else {
+                                $.getJSON('@Url.Action("AddMateriales", "Solicitud")', o, function (s) {
+                                    GetMateriales();
+                                });
+                            }
+                            $("#idMaterialSeleccionado").val(0);
+                            $("#Material").val("");
+                            $("#Cantidad").val("");
+                            $("#NombreUnidad").val("");
+                            GetUnidad(0);
+                        });
+                    });
+                }
+                else {
+                    Toast("debe seleccionar una cantidad", "warning");
+                }
+            }
+            else {
+                Toast("debe seleccionar una unidad", "warning");
+            }
+        }
+        else {
+            Toast("debe seleccionar el material", "warning");
+        }
+    }
+
+    function GetMateriales() {
+        $("#tMateriales").html("");
+        if ($("#IdSolicitud").val() == 0) {
+            $.each(ListaMateriales, (i, val) => {
+                var fila = '<tr><th width="10%">' + (i + 1) + '</th ><td width="45%">' + val.NombreMaterial + '</td><td width="15%">' + val.NombreUnidad + '</td><td width="20%">' + val.CantidadSolicitada + '</td><td width="10%"><button type="button"  onclick="DeleteMaterial(' + i + ')" class="btn btn-outline-light text-dark"><i class="fas fa-trash-alt"></i></button></td></tr>';
+                $("#tMateriales").append(fila);
+            });
+        }
+        else {
+            ListaMateriales = [];
+            $.getJSON('@Url.Action("GetMateriales", "Solicitud")', { Idsolicitud: $("#IdSolicitud").val() }, function (o) {
+                $.each(o, (i, val) => {
+                    if (o[0].Estado == 4) {
+                        $("#nombreColumna").html("Cantidad Aprobada");
+                        var obj = { Id: val.Id, Material: val.Material, NombreUnidad: val.NombreUnidad, CantidadSolicitada: val.CantidadSolicitada, CantidadAprobada: val.CantidadAprobada,EstadoDM: val.EstadoDM };
+                        ListaMateriales.push(obj);
+                        var estadoMaterial = obj.EstadoDM == 2 ? "Aprobado" : obj.EstadoDM == 4 ? "Entregado" : "";
+                        var badg = obj.EstadoDM == 2 || obj.EstadoDM == 4 ? `<p style='cursor: default' class='tooltip-test' title='${estadoMaterial}'>${val.CantidadAprobada}  <span class='text-success'><i class="fas fa-check"></i></span></p>` : `<p style='cursor: default' class='tooltip-test' title='Rechazado'>${val.CantidadAprobada}  <span class='text-danger'><i class="fas fa-times"></i></span></p>`;
+                        var fila = '<tr><th width="10%">' + (i + 1) + '</th ><td width="45%">' + val.Material + '</td><td width="15%">' + val.NombreUnidad + '</td><td width="20%">' + val.CantidadSolicitada + '</td><td width="10%">'+badg+'</td></tr>';
+                        $("#tMateriales").append(fila);
+                    }
+                    else if (o[0].Estado == 1 || o[0].Estado == 3)
+                    {
+                        $("#nombreColumna").html("");
+                        var obj = { Id: val.Id, Material: val.Material, NombreUnidad: val.NombreUnidad, CantidadSolicitada: val.CantidadSolicitada, CantidadAprobada: val.CantidadAprobada };
+                        ListaMateriales.push(obj);
+                        var fila = '<tr><th width="10%">' + (i + 1) + '</th ><td width="45%">' + val.Material + '</td><td width="15%">' + val.NombreUnidad + '</td><td width="20%">' + val.CantidadSolicitada + '</td></tr>';
+                        $("#tMateriales").append(fila);
+                    }
+                    else {
+                        $("#nombreColumna").html("Opciones");
+                        var obj = { Id: val.Id, Material: val.Material, NombreUnidad: val.NombreUnidad, CantidadSolicitada: val.CantidadSolicitada, CantidadAprobada: val.CantidadAprobada };
+                        ListaMateriales.push(obj);
+                        var fila = '<tr><th width="10%">' + (i + 1) + '</th ><td width="45%">' + val.Material + '</td><td width="15%">' + val.NombreUnidad + '</td><td width="20%">' + val.CantidadSolicitada + '</td><td width="10%"><button type="button"  onclick="DeleteMaterialEdit(' + val.Id + ')" class="btn btn-outline-light text-dark" > <i class="fas fa-trash-alt"></i></button ></td></tr>';
+                        $("#tMateriales").append(fila);
+                    }
+                });
+            });
+        }
+    }
+
+    function DeleteMaterial(i) {
+        ListaMateriales.splice(i, 1);
+        GetMateriales();
+    }
+
+    function DeleteMaterialEdit(Id) {
+        $.post('@Url.Action("DeleteMaterialEdit", "Solicitud")', { Id: Id }, (s) => {
+            GetMateriales();
+        });
+    }
+
+    function Save() {
+        var obj = {
+            Id: $("#IdSolicitud").val(),
+            Descripcion: $("#Descripcion").val(),
+            Idtiposolicitud: $("#TipoSolicitud").val(),
+            tDetalleSolicitud: ListaMateriales
+        };
+        $.ajax({
+            url: '@Url.Action("Save", "Solicitud")',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(obj),
+            success: function (s) {
+                switch (s.tipo) {
+                    case 1:
+                        FilterSUByState();
+                        //UpdateTable();
+                        Toast(s.msj, "success");
+                        $("#ModalSolicitud").modal('hide');
+                        break;
+                    case 3:
+                        Toast(s.msj, "danger");
+                        break;
+                    case 4:
+                        Toast(s.msj, "warning");
+                        break;
+                };
+            }
+        });
+    }
+
+    function SaveSend() {
+        var obj = {
+            Id: $("#IdSolicitud").val(),
+            Descripcion: $("#Descripcion").val(),
+            Idtiposolicitud: $("#TipoSolicitud").val(),
+            tDetalleSolicitud: ListaMateriales
+        };
+        $.ajax({
+            url: '@Url.Action("SaveSend", "Solicitud")',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(obj),
+            success: function (s) {
+                switch (s.tipo) {
+                    case 1:
+                        FilterSUByState();
+                        //UpdateTable();
+                        Toast(s.msj, "success");
+                        $("#ModalSolicitud").modal('hide');
+                        break;
+                    case 3:
+                        Toast(s.msj, "danger");
+                        break;
+                    case 4:
+                        Toast(s.msj, "warning");
+                        break;
+                };
+            }
+        });
+    }
+
+    function Delete(id) {
+        $("#TextoEliminar").html("¿Realmente desea eliminar esta solicitud? Este proceso no se puede deshacer.")
+        $("#IdSolicitud").val(id);
+    }
+
+    function ConfirmDelete() {
+        $.post('@Url.Action("Delete","Solicitud")', { Id: $("#IdSolicitud").val() }, function (s) {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalEliminar").modal('hide');
+                    //UpdateTable();
+                    FilterSUByState();
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+            }
+        })
+    }
+
+    function Send(id) {
+        $("#ModalSolicitud").modal('hide');
+        $("#ModalEnviar").modal('show');
+        $("#IdSolicitud").val(id);
+    }
+
+    function Cancel() {
+        $("#ModalEnviar").modal('hide');
+        $("ModalSolicitud").modal('show');
+    }
+
+    function ConfirmSend() {
+        $.post('@Url.Action("Send", "Solicitud")', { Id: $("#IdSolicitud").val() }, function (s) {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalEnviar").modal('hide');
+                    FilterSUByState();
+                    //UpdateTable();
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+            }
+        })
+    }
+
+    function Edit(Id) {
+        ActiveInputs();
+        $("#Titulo").html("Editar Solicitud");
+        $.getJSON('@Url.Action("GetId", "Solicitud")', { Id: Id }, function (o) {
+            $("#IdSolicitud").val(o.Id),
+            $("#Descripcion").val(o.Descripcion),
+            $.getJSON('@Url.Action("GetAll","TipoSolicitud")', function (tp) {
+                $("#TipoSolicitud").html("");
+                var option = "<option value='0' selected>Seleccione una opción</option>";
+                $("#TipoSolicitud").append(option);
+                for (var i = 0; i < tp.length; i++) {
+                    if (tp[i].Id == o.Idtiposolicitud) {
+                        option = "<option value=" + tp[i].Id + " selected>" + tp[i].Nombre + "</option>";
+                    } else {
+                        option = "<option value=" + tp[i].Id + " >" + tp[i].Nombre + "</option>";
+                    }
+                    $("#TipoSolicitud").append(option);
+                }
+            });
+            GetMateriales();
+        });
+    }
+
+    function detail(Id) {
+        DisableInputs();
+        $("#Titulo").html("Detalle de la Solicitud");
+        $.getJSON('@Url.Action("GetId", "Solicitud")', { Id: Id }, function (o) {
+            $("#IdSolicitud").val(o.Id);
+            $("#Descripcion").val(o.Descripcion);
+            $.getJSON('@Url.Action("GetAll","TipoSolicitud")', function (tp) {
+                $("#TipoSolicitud").html("");
+                var option = "<option value='0' selected>Seleccione una opción</option>";
+                $("#TipoSolicitud").append(option);
+                for (var i = 0; i < tp.length; i++) {
+                    if (tp[i].Id == o.Idtiposolicitud) {
+                        option = "<option value=" + tp[i].Id + " selected>" + tp[i].Nombre + "</option>";
+                    } else {
+                        option = "<option value=" + tp[i].Id + " >" + tp[i].Nombre + "</option>";
+                    }
+                    $("#TipoSolicitud").append(option);
+                }
+            });
+            GetMateriales();
+        });
+    }
+
+    function DisableInputs() {
+        $("#Descripcion").prop("disabled", true);
+        $("#TipoSolicitud").prop("disabled", true);
+        $(".ContenedorInputs").addClass('d-none');
+        $(".ContenedorInputs").removeClass('hidden');
+    }
+
+    function ActiveInputs() {
+        $("#Descripcion").prop("disabled", false);
+        $("#TipoSolicitud").prop("disabled", false);
+        $(".ContenedorInputs").removeClass('d-none');
+        $(".ContenedorInputs").addClass('hidden');
+    }
+
+    function GetUnidad(id) {
+        $("#IdUnidad").html("");
+         var option = "<option value='0' selected>Primero seleccione un material</option>";
+        $("#IdUnidad").append(option);
+        if (id > 0) {
+            $.getJSON('@Url.Action("GetUnidad", "Solicitud")', { Id: id }, function (u) {
+                $("#IdUnidad").append(u);
+            });
+        }
+    }
+</script>

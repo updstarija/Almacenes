@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div style="padding:2%">
+    <div class="card shadow">
+        <div class="card-header text-light" style="background-color: #00377C">
+            <h4>Unidades</h4>
+        </div>
+        <div class="card-body">
+
+            <div id="cargando" class="text-center text-primary">
+                <div class="spinner-border" style="width: 5rem; height: 5rem; margin:2%" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <h5 class="d-flex justify-content-center">Cargando...</h5>
+            </div>
+            <div class="table-responsive mt-2 mb-2" id="contenido">
+                <small>Se visualiza un detalle de la lista de unidades</small>
+                <table id="tUnidad" class="table table-striped table-bordered display" style="width:100%"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalUnidad" tabindex="-1">
+    <form id="FrmUnidad" name="FrmUnidad">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5 class="modal-title" id="Titulo"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="hidden" id="IdUnidad" name="Id" class="form-control" />
+                        <label class="form-label">Unidad:</label>
+                        <input type="text" class="form-control" id="Nombre" name="Nombre" placeholder="Introduzca el nombre de la unidad" aria-describedby="Nombre">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Cantidad:</label>
+                        <input type="number" min="1" class="form-control" id="CantidadUni" name="Cantidad" placeholder="Introduzca la cantidad" aria-describedby="Cantidad" onfocusout="UpdateCantidad()">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="Save()"><i class="far fa-check-circle"></i> Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    tabla = $("#tUnidad").DataTable({
+        columns: [
+            { title: "Nro", width: '2%' },
+            { title: "Nombre", width: '83%' },
+            { title: "Cantidad", width: '10%' },
+            { title: "<button  class='form-control btn btn-primary' id='BtnAgregar' onclick='UnitAdd()' data-bs-toggle='modal' data-bs-target='#ModalUnidad'>Nuevo <i class='fa fa-plus-circle' aria-hidden='true'></i></button>", width: '10%' }
+        ]
+    });
+    $("#cargando").show();
+    $("#contenido").hide();
+    $(document).ready(function () {
+        setTimeout(function () {
+            $("#cargando").hide();
+            $("#contenido").show();
+            UpdateTable();
+        }, 1000);
+    });
+    function UpdateTable()
+    {
+        $.post('@Url.Action("Get","Unidad")', function (o) {
+            tabla.destroy();
+            dataset = o;
+            tabla = $("#tUnidad").DataTable({
+                data: dataset,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
+                },
+                columns: [{ width: '2%' }, { width: '83%' }, { width: '10%' }, { orderable: false, width: '10%' }]
+            });
+        });
+    }
+
+    function UpdateCantidad() {
+        var cant = document.getElementById("CantidadUni").value;
+        if (cant<1) {
+            document.getElementById("CantidadUni").value = 1;
+        }
+    }
+
+     function UnitAdd() {
+        $("#Titulo").html("Nuevo Unidad");
+        $("#FrmUnidad")[0].reset();
+        $("#IdUnidad").val(0)
+    }
+
+    function Save() {
+        var o = $("#FrmUnidad").serialize();
+        $.post('@Url.Action("Save","Unidad")', o, function (s) {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalUnidad").modal('hide');
+                    UpdateTable();
+                    break;
+                case 2:
+                    Toast(s.msj, 'success');
+                    $("#ModalUnidad").modal('hide');
+                    UpdateTable();
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+                default:
+                    Toast(s.msj, 'warning');
+                    break;
+            }
+        })
+    }
+
+    function Edit(id) {
+        $("#Titulo").html("Editar Unidad");
+        $.getJSON('@Url.Action("GetId","Unidad")', { Id: id }, function (o) {
+            $("#IdUnidad").val(o.Id);
+            $("#Nombre").val(o.Nombre);
+            $("#CantidadUni").val(o.Cantidad);
+        });
+    }
+
+    function Delete(id) {
+        $("#TextoEliminar").html("¿Realmente desea eliminar esta unidad? Este proceso no se puede deshacer.")
+        $("#IdUnidad").val(id);
+    }
+
+    function ConfirmDelete() {
+        $.post('@Url.Action("Delete","Unidad")', { Id: $("#IdUnidad").val() }, function (s) {
+            switch (s.tipo) {
+                case 1:
+                    Toast(s.msj, 'success');
+                    $("#ModalEliminar").modal('hide');
+                    UpdateTable();
+                    break;
+                case 2:
+                    Toast(s.msj, 'success');
+                    $("#ModalEliminar").modal('hide');
+                    UpdateTable();
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+                default:
+                    Toast(s.msj, 'warning');
+                    $("#ModalEliminar").modal('hide');
+                    break;
+            }
+        })
+    }
+
+</script>

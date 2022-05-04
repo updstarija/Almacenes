@@ -1,0 +1,118 @@
+﻿@using Almacenes.Models
+@{
+    if (!Request.IsAuthenticated)
+    {
+        Response.Redirect("~/Inicio/Index");
+    }
+    else
+    {
+        AlmacenesEntities db = new AlmacenesEntities();
+        var user = db.tUsuario.Single(o => o.Nomusu == User.Identity.Name);
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width" />
+            <title>@ViewBag.Title</title>
+            <!--Content CSS-->
+            <!--Boostrap-->
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+            <!--DataTable-->
+            <link href="~/Content/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+            <!--Toast-->
+            <link href="~/Content/css/StyleToast.css" rel="stylesheet" />
+            <!--Icons-->
+            <link href="~/Content/css/all.min.css" rel="stylesheet" />
+            <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+            <!--Style Components-->
+            <link href="~/Content/css/StyleComponents.css" rel="stylesheet" />
+            <!--Content JS-->
+            <!--Jquery-->
+            @*<script src="~/Content/js/jquery.min.js"></script>*@
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+            <!--Jquery CONFIRM-->
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+            <!--Boostrap-->
+
+            <script src="~/Content/js/popper.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
+            <!--DataTable-->
+            <script src="~/Content/js/jquery.dataTables.min.js"></script>
+            <script src="~/Content/js/dataTables.bootstrap5.min.js"></script>
+            <!--Icons-->
+            <script src="~/Content/js/all.min.js"></script>
+            <script src="~/Content/js/select2.full.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        </head>
+        <body>
+            <div>
+
+                @{
+                    switch (user.IdTtipo)
+                    {
+                        case 1:
+                            @Html.Partial("_MenuAdministrador")
+                            break;
+                        case 2:
+                            @Html.Partial("_MenuUsuario")
+                            break;
+                    }
+                }
+                <div class="mt-2">
+                    @RenderBody()
+                </div>
+            </div>
+            <script>
+                var it = 0;
+                var toast = [];
+                function Toast(mensaje, tipo) {
+                    var titulo = "Exito";
+                    icon = "fas fa-check";
+                    if (tipo == 'danger') {
+                        titulo = "Error";
+                        icon = "far fa-window-close";
+                    }
+                    if (tipo == 'info') {
+                        titulo = "Información";
+                        icon = "fas fa-exclamation-circle";
+                    }
+                    if (tipo == 'warning') {
+                        titulo = "Alerta";
+                        icon = "fas fa-exclamation-triangle";
+                    }
+                    var tipo = "bg-" + tipo;
+                    var toast = '<div id="toast' + it + '" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="true"  data-delay="2000" class="toast" style="width:250px;min-heigth:200px;">' + '<div class="toast-header text-white ' + tipo + '"><i class="' + icon + '"></i> <strong class="me-auto ms-1">' + titulo.toUpperCase() + '</strong><small></small><button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button></div>' + '<div class="toast-body" id="alerta-danger-mensaje"> ' + mensaje + '</div></div> ';
+                    $("#toasts").append(toast);
+                    $('#toast' + it).toast('show');
+                    it++;
+                }
+            </script>
+
+            @RenderSection("scripts", required: false)
+
+        </body>
+    </html>
+
+    <div class="modal fade" id="ModalEliminar" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger d-flex justify-content-center">
+                    <h4 class="modal-title text-light text-center">¿Está seguro?</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <p style="font-size:20px" id="TextoEliminar"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-ban"></i> Cancelar</button>
+                    <button type="button" class="btn btn-outline-success" onclick="ConfirmDelete()"><i class="far fa-check-circle"></i> Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toasts" style="position: fixed; top: 20px; right: 10px;width:250px; z-index:9999">
+
+    </div>
+}
+}

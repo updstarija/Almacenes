@@ -1,0 +1,193 @@
+﻿
+@{
+    ViewBag.Title = "Perfil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid p-4 bg-light">
+    <h2>Bienvenido</h2>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="card shadow" style="height:450px">
+                <div class="card-body text-center" id="ContenedorPerfil">
+                    <!--carga perfil-->
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card shadow" style="height:450px">
+                <div class="card-body text-center">
+                    <h5 class="card-title">INFORMACIÓN PERSONAL</h5>
+                    <img src="https://static.vecteezy.com/system/resources/previews/002/318/271/non_2x/user-profile-icon-free-vector.jpg" class="img-fluid" style="height: 230px; width: 230px" />
+                    <p class="card-text">Mantenga su información actualizada.</p>
+                    <p class="card-text text-primary"><a href="#" data-bs-toggle='modal' data-bs-target='#ModalInformacion' onclick="ViewInformation()">ACTUALIZAR INFORMACIÓN <i class="fas fa-arrow-right"></i></a></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card shadow" style="height:450px">
+                <div class="card-body text-center">
+                    <h5 class="card-title">CONTRASEÑA</h5>
+                    <img src="https://prints.ultracoloringpages.com/e54eba901820b2ba066c0e742d432046.png" class="img-fluid mt-3" style="height:230px; width:230px" />
+                    <p class="card-text">Aumente la seguridad de su contraseña o cámbiela si otra persona la sabe.</p>
+                    <p class="card-text text-primary"><a href="#" data-bs-toggle='modal' data-bs-target='#ModalContraseña' onclick="ClearPassword()">CAMBIAR CONTRASEÑA <i class="fas fa-arrow-right"></i></a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalInformacion" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title">Información Personal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+            </div>
+            <div class="modal-body">
+                <form id="FrmPersona" name="FrmPersona">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="mb-3">
+                                <label class="form-label">Nombre:</label>
+                                <input type="text" class="form-control" id="Nombre" name="Nombre" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="mb-3">
+                                <label class="form-label">Apellido Paterno:</label>
+                                <input type="text" class="form-control" id="Paterno" name="Paterno" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="mb-3">
+                                <label class="form-label">Apellido Materno:</label>
+                                <input type="text" class="form-control" id="Materno" name="Materno" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="mb-3">
+                                <label class="form-label">Documento de Identidad:</label>
+                                <input type="text" class="form-control" id="Documento" name="Documento" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="mb-3">
+                                <label class="form-label">Correo:</label>
+                                <input type="text" class="form-control" id="Correo" disabled />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="UpdateInformation()">Actualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="ModalContraseña" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-light">
+                <h5 class="modal-title">Actualizar Contraseña</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color:white"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña Anterior:</label>
+                            <input type="password" class="form-control" id="ContraseñaAnte" name="Anterior Contraseña" />
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-3">
+                            <label class="form-label">Nueva Contraseña:</label>
+                            <input type="password" class="form-control" id="NuevaContraseña" name="Nueva Contraseña" />
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="mb-3">
+                            <label class="form-label">Repita Contraseña:</label>
+                            <input type="password" class="form-control" id="NuevaContraseña2" name="Repita la contraseña" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-outline-primary" onclick="UpdatePassword()">Cambiar Contraseña</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+    $(document).ready(function () {
+        ViewProfile();
+    });
+
+    function ViewProfile() {
+        $("#ContenedorPerfil").html("");
+        $.getJSON('@Url.Action("ViewProfile", "Usuario")', function (o) {
+            $("#ContenedorPerfil").html(o);
+        });
+    }
+
+    function ViewInformation() {
+        $.getJSON('@Url.Action("ViewInformation", "Usuario")', function (o) {
+            $("#Nombre").val(o.Nombre);
+            $("#Paterno").val(o.Paterno);
+            $("#Materno").val(o.Materno);
+            $("#Documento").val(o.Documento);
+            $("#Correo").val(o.Correo);
+        });
+    }
+
+    function UpdateInformation() {
+        var o = $("#FrmPersona").serialize();
+        $.post('@Url.Action("UpdateInformation", "Usuario")', o, function (s)
+        {
+            switch (s.tipo) {
+                case 1:
+                    ViewProfile();
+                    Toast(s.msj, 'success');
+                    $("#ModalInformacion").modal('hide');
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+                default:
+                    Toast(s.msj, 'warning');
+                    break;
+            }
+        })
+    }
+
+    function ClearPassword() {
+        $("#ContraseñaAnte").val("");
+        $("#NuevaContraseña").val("");
+        $("#NuevaContraseña2").val("");
+    }
+
+    function UpdatePassword() {
+        $.post('@Url.Action("UpdatePassword", "Usuario")', { ContraseñaAnte: $("#ContraseñaAnte").val(), NuevaContraseña: $("#NuevaContraseña").val(), NuevaContraseña2: $("#NuevaContraseña2").val() }, function (s)
+        {
+            switch (s.tipo) {
+                case 1:
+                    ViewProfile();
+                    Toast(s.msj, 'success');
+                    $("#ModalContraseña").modal('hide');
+                    ClearPassword();
+                    break;
+                case 3:
+                    Toast(s.msj, 'danger');
+                    break;
+                default:
+                    Toast(s.msj, 'warning');
+                    break;
+            }
+        })
+    }
+
+    </script>

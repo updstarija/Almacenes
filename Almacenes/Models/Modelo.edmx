@@ -1,0 +1,848 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="PruebaAlmaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="tCargo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" />
+          <Property Name="Estado" Type="int" />
+        </EntityType>
+        <EntityType Name="tDepartamento">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="500" />
+          <Property Name="Estado" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tDetalleMaterial">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdUnidad" Type="int" Nullable="false" />
+          <Property Name="IdMaterial" Type="int" Nullable="false" />
+          <Property Name="Estado" Type="int" />
+        </EntityType>
+        <EntityType Name="tDetalleSolicitud">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Idsolicitud" Type="int" />
+          <Property Name="IdDetalleMaterial" Type="int" />
+          <Property Name="CantidadSolicitada" Type="int" />
+          <Property Name="Estado" Type="int" />
+          <Property Name="CantidadAprobada" Type="int" />
+          <Property Name="Especificacion" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="tMaterial">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="50" />
+          <Property Name="Estado" Type="int" />
+          <Property Name="Idunidad" Type="int" />
+        </EntityType>
+        <EntityType Name="tPersona">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" />
+          <Property Name="Paterno" Type="varchar" MaxLength="50" />
+          <Property Name="Materno" Type="varchar" MaxLength="50" />
+          <Property Name="Documento" Type="varchar" MaxLength="50" />
+          <Property Name="FechaNac" Type="datetime" />
+          <Property Name="Estado" Type="int" />
+          <Property Name="Idcargo" Type="int" />
+          <Property Name="Idsuperior" Type="int" />
+          <Property Name="IdDepartamento" Type="int" />
+        </EntityType>
+        <EntityType Name="tReseteoContraseña">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Token" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="Fecha" Type="datetime" Nullable="false" />
+          <Property Name="IdUsuario" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="tSolicitud">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="250" />
+          <Property Name="Respuesta" Type="varchar" MaxLength="250" />
+          <Property Name="Fecha" Type="datetime" />
+          <Property Name="Idusuario" Type="int" />
+          <Property Name="Idtiposolicitud" Type="int" />
+          <Property Name="Estado" Type="int" />
+          <Property Name="FechaRespuesta" Type="datetime" />
+        </EntityType>
+        <EntityType Name="tTipo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" />
+          <Property Name="Estado" Type="int" />
+        </EntityType>
+        <EntityType Name="tTipoSolicitud">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" />
+          <Property Name="Estado" Type="int" />
+        </EntityType>
+        <EntityType Name="tUnidad">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="50" />
+          <Property Name="Estado" Type="int" />
+          <Property Name="Cantidad" Type="int" />
+        </EntityType>
+        <EntityType Name="tUsuario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Nomusu" Type="varchar" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="255" />
+          <Property Name="Estado" Type="int" />
+          <Property Name="IdTtipo" Type="int" />
+        </EntityType>
+        <Association Name="FK__tDetalleM__IdMat__37A5467C">
+          <End Role="tMaterial" Type="Self.tMaterial" Multiplicity="1" />
+          <End Role="tDetalleMaterial" Type="Self.tDetalleMaterial" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tMaterial">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tDetalleMaterial">
+              <PropertyRef Name="IdMaterial" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tDetalleM__IdUni__38996AB5">
+          <End Role="tUnidad" Type="Self.tUnidad" Multiplicity="1" />
+          <End Role="tDetalleMaterial" Type="Self.tDetalleMaterial" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tUnidad">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tDetalleMaterial">
+              <PropertyRef Name="IdUnidad" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tReseteoC__IdUsu__3C69FB99">
+          <End Role="tUsuario" Type="Self.tUsuario" Multiplicity="1" />
+          <End Role="tReseteoContraseña" Type="Self.tReseteoContraseña" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tUsuario">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tReseteoContraseña">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_Departamento">
+          <End Role="tDepartamento" Type="Self.tDepartamento" Multiplicity="0..1" />
+          <End Role="tPersona" Type="Self.tPersona" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tDepartamento">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tPersona">
+              <PropertyRef Name="IdDepartamento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tDetalleSolicitud_tDetalleMateria">
+          <End Role="tDetalleMaterial" Type="Self.tDetalleMaterial" Multiplicity="0..1" />
+          <End Role="tDetalleSolicitud" Type="Self.tDetalleSolicitud" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tDetalleMaterial">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tDetalleSolicitud">
+              <PropertyRef Name="IdDetalleMaterial" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tDetalleSolicitud_tSolicitud">
+          <End Role="tSolicitud" Type="Self.tSolicitud" Multiplicity="0..1" />
+          <End Role="tDetalleSolicitud" Type="Self.tDetalleSolicitud" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tSolicitud">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tDetalleSolicitud">
+              <PropertyRef Name="Idsolicitud" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tPersona_tCargo">
+          <End Role="tCargo" Type="Self.tCargo" Multiplicity="0..1" />
+          <End Role="tPersona" Type="Self.tPersona" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tCargo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tPersona">
+              <PropertyRef Name="Idcargo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tSolicitud_tTipoSolicitud">
+          <End Role="tTipoSolicitud" Type="Self.tTipoSolicitud" Multiplicity="0..1" />
+          <End Role="tSolicitud" Type="Self.tSolicitud" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tTipoSolicitud">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tSolicitud">
+              <PropertyRef Name="Idtiposolicitud" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tSolicitud_tUsuario">
+          <End Role="tUsuario" Type="Self.tUsuario" Multiplicity="0..1" />
+          <End Role="tSolicitud" Type="Self.tSolicitud" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tUsuario">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tSolicitud">
+              <PropertyRef Name="Idusuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tUsuario_tPersona">
+          <End Role="tPersona" Type="Self.tPersona" Multiplicity="1" />
+          <End Role="tUsuario" Type="Self.tUsuario" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tPersona">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tUsuario">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tUsuario_tTipo">
+          <End Role="tTipo" Type="Self.tTipo" Multiplicity="0..1" />
+          <End Role="tUsuario" Type="Self.tUsuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tTipo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tUsuario">
+              <PropertyRef Name="IdTtipo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PruebaAlmaModelStoreContainer">
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tCargo" EntityType="Self.tCargo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tDepartamento" EntityType="Self.tDepartamento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tDetalleMaterial" EntityType="Self.tDetalleMaterial" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tDetalleSolicitud" EntityType="Self.tDetalleSolicitud" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tMaterial" EntityType="Self.tMaterial" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tPersona" EntityType="Self.tPersona" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tReseteoContraseña" EntityType="Self.tReseteoContraseña" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tSolicitud" EntityType="Self.tSolicitud" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tTipo" EntityType="Self.tTipo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tTipoSolicitud" EntityType="Self.tTipoSolicitud" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tUnidad" EntityType="Self.tUnidad" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tUsuario" EntityType="Self.tUsuario" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__tDetalleM__IdMat__37A5467C" Association="Self.FK__tDetalleM__IdMat__37A5467C">
+            <End Role="tMaterial" EntitySet="tMaterial" />
+            <End Role="tDetalleMaterial" EntitySet="tDetalleMaterial" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tDetalleM__IdUni__38996AB5" Association="Self.FK__tDetalleM__IdUni__38996AB5">
+            <End Role="tUnidad" EntitySet="tUnidad" />
+            <End Role="tDetalleMaterial" EntitySet="tDetalleMaterial" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tReseteoC__IdUsu__3C69FB99" Association="Self.FK__tReseteoC__IdUsu__3C69FB99">
+            <End Role="tUsuario" EntitySet="tUsuario" />
+            <End Role="tReseteoContraseña" EntitySet="tReseteoContraseña" />
+          </AssociationSet>
+          <AssociationSet Name="fk_Departamento" Association="Self.fk_Departamento">
+            <End Role="tDepartamento" EntitySet="tDepartamento" />
+            <End Role="tPersona" EntitySet="tPersona" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tDetalleSolicitud_tDetalleMateria" Association="Self.FK_tDetalleSolicitud_tDetalleMateria">
+            <End Role="tDetalleMaterial" EntitySet="tDetalleMaterial" />
+            <End Role="tDetalleSolicitud" EntitySet="tDetalleSolicitud" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tDetalleSolicitud_tSolicitud" Association="Self.FK_tDetalleSolicitud_tSolicitud">
+            <End Role="tSolicitud" EntitySet="tSolicitud" />
+            <End Role="tDetalleSolicitud" EntitySet="tDetalleSolicitud" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tPersona_tCargo" Association="Self.FK_tPersona_tCargo">
+            <End Role="tCargo" EntitySet="tCargo" />
+            <End Role="tPersona" EntitySet="tPersona" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tSolicitud_tTipoSolicitud" Association="Self.FK_tSolicitud_tTipoSolicitud">
+            <End Role="tTipoSolicitud" EntitySet="tTipoSolicitud" />
+            <End Role="tSolicitud" EntitySet="tSolicitud" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tSolicitud_tUsuario" Association="Self.FK_tSolicitud_tUsuario">
+            <End Role="tUsuario" EntitySet="tUsuario" />
+            <End Role="tSolicitud" EntitySet="tSolicitud" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tUsuario_tPersona" Association="Self.FK_tUsuario_tPersona">
+            <End Role="tPersona" EntitySet="tPersona" />
+            <End Role="tUsuario" EntitySet="tUsuario" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tUsuario_tTipo" Association="Self.FK_tUsuario_tTipo">
+            <End Role="tTipo" EntitySet="tTipo" />
+            <End Role="tUsuario" EntitySet="tUsuario" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PruebaAlmaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="tCargo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Int32" />
+          <NavigationProperty Name="tPersona" Relationship="Self.FK_tPersona_tCargo" FromRole="tCargo" ToRole="tPersona" />
+        </EntityType>
+        <EntityType Name="tDetalleMaterial">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdUnidad" Type="Int32" Nullable="false" />
+          <Property Name="IdMaterial" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="tMaterial" Relationship="Self.FK__tDetalleM__IdMat__48CFD27E" FromRole="tDetalleMaterial" ToRole="tMaterial" />
+          <NavigationProperty Name="tUnidad" Relationship="Self.FK__tDetalleM__IdUni__49C3F6B7" FromRole="tDetalleMaterial" ToRole="tUnidad" />
+          <NavigationProperty Name="tDetalleSolicitud" Relationship="Self.FK_tDetalleSolicitud_tDetalleMateria" FromRole="tDetalleMaterial" ToRole="tDetalleSolicitud" />
+          <Property Name="Estado" Type="Int32" />
+        </EntityType>
+        <EntityType Name="tDetalleSolicitud">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Idsolicitud" Type="Int32" />
+          <Property Name="IdDetalleMaterial" Type="Int32" />
+          <Property Name="CantidadSolicitada" Type="Int32" />
+          <Property Name="Estado" Type="Int32" />
+          <Property Name="CantidadAprobada" Type="Int32" />
+          <NavigationProperty Name="tDetalleMaterial" Relationship="Self.FK_tDetalleSolicitud_tDetalleMateria" FromRole="tDetalleSolicitud" ToRole="tDetalleMaterial" />
+          <NavigationProperty Name="tSolicitud" Relationship="Self.FK_tDetalleSolicitud_tSolicitud" FromRole="tDetalleSolicitud" ToRole="tSolicitud" />
+          <Property Name="Especificacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="tMaterial">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Int32" />
+          <Property Name="Idunidad" Type="Int32" />
+          <NavigationProperty Name="tDetalleMaterial" Relationship="Self.FK__tDetalleM__IdMat__48CFD27E" FromRole="tMaterial" ToRole="tDetalleMaterial" />
+        </EntityType>
+        <EntityType Name="tPersona">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Paterno" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Materno" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Documento" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaNac" Type="DateTime" Precision="3" />
+          <Property Name="Estado" Type="Int32" />
+          <Property Name="Idcargo" Type="Int32" />
+          <Property Name="Idsuperior" Type="Int32" />
+          <NavigationProperty Name="tCargo" Relationship="Self.FK_tPersona_tCargo" FromRole="tPersona" ToRole="tCargo" />
+          <NavigationProperty Name="tUsuario" Relationship="Self.FK_tUsuario_tPersona" FromRole="tPersona" ToRole="tUsuario" />
+          <Property Name="IdDepartamento" Type="Int32" />
+          <NavigationProperty Name="tDepartamento" Relationship="PruebaAlmaModel.fk_Departamento" FromRole="tPersona" ToRole="tDepartamento" />
+        </EntityType>
+        <EntityType Name="tReseteoContraseña">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Token" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Fecha" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IdUsuario" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="tUsuario" Relationship="Self.FK__tReseteoC__IdUsu__5DCAEF64" FromRole="tReseteoContraseña" ToRole="tUsuario" />
+        </EntityType>
+        <EntityType Name="tSolicitud">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Descripcion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Respuesta" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="Idusuario" Type="Int32" />
+          <Property Name="Idtiposolicitud" Type="Int32" />
+          <Property Name="Estado" Type="Int32" />
+          <NavigationProperty Name="tDetalleSolicitud" Relationship="Self.FK_tDetalleSolicitud_tSolicitud" FromRole="tSolicitud" ToRole="tDetalleSolicitud" />
+          <NavigationProperty Name="tTipoSolicitud" Relationship="Self.FK_tSolicitud_tTipoSolicitud" FromRole="tSolicitud" ToRole="tTipoSolicitud" />
+          <NavigationProperty Name="tUsuario" Relationship="Self.FK_tSolicitud_tUsuario" FromRole="tSolicitud" ToRole="tUsuario" />
+          <Property Name="FechaRespuesta" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="tTipo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Int32" />
+          <NavigationProperty Name="tUsuario" Relationship="Self.FK_tUsuario_tTipo" FromRole="tTipo" ToRole="tUsuario" />
+        </EntityType>
+        <EntityType Name="tTipoSolicitud">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Int32" />
+          <NavigationProperty Name="tSolicitud" Relationship="Self.FK_tSolicitud_tTipoSolicitud" FromRole="tTipoSolicitud" ToRole="tSolicitud" />
+        </EntityType>
+        <EntityType Name="tUnidad">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Int32" />
+          <NavigationProperty Name="tDetalleMaterial" Relationship="Self.FK__tDetalleM__IdUni__49C3F6B7" FromRole="tUnidad" ToRole="tDetalleMaterial" />
+          <Property Name="Cantidad" Type="Int32" />
+        </EntityType>
+        <EntityType Name="tUsuario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Nomusu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Int32" />
+          <Property Name="IdTtipo" Type="Int32" />
+          <NavigationProperty Name="tPersona" Relationship="Self.FK_tUsuario_tPersona" FromRole="tUsuario" ToRole="tPersona" />
+          <NavigationProperty Name="tReseteoContraseña" Relationship="Self.FK__tReseteoC__IdUsu__5DCAEF64" FromRole="tUsuario" ToRole="tReseteoContraseña" />
+          <NavigationProperty Name="tSolicitud" Relationship="Self.FK_tSolicitud_tUsuario" FromRole="tUsuario" ToRole="tSolicitud" />
+          <NavigationProperty Name="tTipo" Relationship="Self.FK_tUsuario_tTipo" FromRole="tUsuario" ToRole="tTipo" />
+        </EntityType>
+        <Association Name="FK_tPersona_tCargo">
+          <End Role="tCargo" Type="Self.tCargo" Multiplicity="0..1" />
+          <End Role="tPersona" Type="Self.tPersona" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tCargo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tPersona">
+              <PropertyRef Name="Idcargo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tDetalleM__IdMat__48CFD27E">
+          <End Role="tMaterial" Type="Self.tMaterial" Multiplicity="1" />
+          <End Role="tDetalleMaterial" Type="Self.tDetalleMaterial" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tMaterial">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tDetalleMaterial">
+              <PropertyRef Name="IdMaterial" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tDetalleM__IdUni__49C3F6B7">
+          <End Role="tUnidad" Type="Self.tUnidad" Multiplicity="1" />
+          <End Role="tDetalleMaterial" Type="Self.tDetalleMaterial" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tUnidad">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tDetalleMaterial">
+              <PropertyRef Name="IdUnidad" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tDetalleSolicitud_tDetalleMateria">
+          <End Role="tDetalleMaterial" Type="Self.tDetalleMaterial" Multiplicity="0..1" />
+          <End Role="tDetalleSolicitud" Type="Self.tDetalleSolicitud" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tDetalleMaterial">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tDetalleSolicitud">
+              <PropertyRef Name="IdDetalleMaterial" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tDetalleSolicitud_tSolicitud">
+          <End Role="tSolicitud" Type="Self.tSolicitud" Multiplicity="0..1" />
+          <End Role="tDetalleSolicitud" Type="Self.tDetalleSolicitud" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tSolicitud">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tDetalleSolicitud">
+              <PropertyRef Name="Idsolicitud" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tUsuario_tPersona">
+          <End Role="tPersona" Type="Self.tPersona" Multiplicity="1" />
+          <End Role="tUsuario" Type="Self.tUsuario" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="tPersona">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tUsuario">
+              <PropertyRef Name="Id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__tReseteoC__IdUsu__5DCAEF64">
+          <End Role="tUsuario" Type="Self.tUsuario" Multiplicity="1" />
+          <End Role="tReseteoContraseña" Type="Self.tReseteoContraseña" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tUsuario">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tReseteoContraseña">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tSolicitud_tTipoSolicitud">
+          <End Role="tTipoSolicitud" Type="Self.tTipoSolicitud" Multiplicity="0..1" />
+          <End Role="tSolicitud" Type="Self.tSolicitud" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tTipoSolicitud">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tSolicitud">
+              <PropertyRef Name="Idtiposolicitud" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tSolicitud_tUsuario">
+          <End Role="tUsuario" Type="Self.tUsuario" Multiplicity="0..1" />
+          <End Role="tSolicitud" Type="Self.tSolicitud" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tUsuario">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tSolicitud">
+              <PropertyRef Name="Idusuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_tUsuario_tTipo">
+          <End Role="tTipo" Type="Self.tTipo" Multiplicity="0..1" />
+          <End Role="tUsuario" Type="Self.tUsuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tTipo">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tUsuario">
+              <PropertyRef Name="IdTtipo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="AlmacenesEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="tCargo" EntityType="Self.tCargo" />
+          <EntitySet Name="tDetalleMaterial" EntityType="Self.tDetalleMaterial" />
+          <EntitySet Name="tDetalleSolicitud" EntityType="Self.tDetalleSolicitud" />
+          <EntitySet Name="tMaterial" EntityType="Self.tMaterial" />
+          <EntitySet Name="tPersona" EntityType="Self.tPersona" />
+          <EntitySet Name="tReseteoContraseña" EntityType="Self.tReseteoContraseña" />
+          <EntitySet Name="tSolicitud" EntityType="Self.tSolicitud" />
+          <EntitySet Name="tTipo" EntityType="Self.tTipo" />
+          <EntitySet Name="tTipoSolicitud" EntityType="Self.tTipoSolicitud" />
+          <EntitySet Name="tUnidad" EntityType="Self.tUnidad" />
+          <EntitySet Name="tUsuario" EntityType="Self.tUsuario" />
+          <AssociationSet Name="FK_tPersona_tCargo" Association="Self.FK_tPersona_tCargo">
+            <End Role="tCargo" EntitySet="tCargo" />
+            <End Role="tPersona" EntitySet="tPersona" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tDetalleM__IdMat__48CFD27E" Association="Self.FK__tDetalleM__IdMat__48CFD27E">
+            <End Role="tMaterial" EntitySet="tMaterial" />
+            <End Role="tDetalleMaterial" EntitySet="tDetalleMaterial" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tDetalleM__IdUni__49C3F6B7" Association="Self.FK__tDetalleM__IdUni__49C3F6B7">
+            <End Role="tUnidad" EntitySet="tUnidad" />
+            <End Role="tDetalleMaterial" EntitySet="tDetalleMaterial" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tDetalleSolicitud_tDetalleMateria" Association="Self.FK_tDetalleSolicitud_tDetalleMateria">
+            <End Role="tDetalleMaterial" EntitySet="tDetalleMaterial" />
+            <End Role="tDetalleSolicitud" EntitySet="tDetalleSolicitud" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tDetalleSolicitud_tSolicitud" Association="Self.FK_tDetalleSolicitud_tSolicitud">
+            <End Role="tSolicitud" EntitySet="tSolicitud" />
+            <End Role="tDetalleSolicitud" EntitySet="tDetalleSolicitud" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tUsuario_tPersona" Association="Self.FK_tUsuario_tPersona">
+            <End Role="tPersona" EntitySet="tPersona" />
+            <End Role="tUsuario" EntitySet="tUsuario" />
+          </AssociationSet>
+          <AssociationSet Name="FK__tReseteoC__IdUsu__5DCAEF64" Association="Self.FK__tReseteoC__IdUsu__5DCAEF64">
+            <End Role="tUsuario" EntitySet="tUsuario" />
+            <End Role="tReseteoContraseña" EntitySet="tReseteoContraseña" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tSolicitud_tTipoSolicitud" Association="Self.FK_tSolicitud_tTipoSolicitud">
+            <End Role="tTipoSolicitud" EntitySet="tTipoSolicitud" />
+            <End Role="tSolicitud" EntitySet="tSolicitud" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tSolicitud_tUsuario" Association="Self.FK_tSolicitud_tUsuario">
+            <End Role="tUsuario" EntitySet="tUsuario" />
+            <End Role="tSolicitud" EntitySet="tSolicitud" />
+          </AssociationSet>
+          <AssociationSet Name="FK_tUsuario_tTipo" Association="Self.FK_tUsuario_tTipo">
+            <End Role="tTipo" EntitySet="tTipo" />
+            <End Role="tUsuario" EntitySet="tUsuario" />
+          </AssociationSet>
+          <EntitySet Name="sysdiagrams" EntityType="PruebaAlmaModel.sysdiagrams" />
+          <EntitySet Name="tDepartamento" EntityType="PruebaAlmaModel.tDepartamento" />
+          <AssociationSet Name="fk_Departamento" Association="PruebaAlmaModel.fk_Departamento">
+            <End Role="tDepartamento" EntitySet="tDepartamento" />
+            <End Role="tPersona" EntitySet="tPersona" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="tDepartamento">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Nombre" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="tPersona" Relationship="PruebaAlmaModel.fk_Departamento" FromRole="tDepartamento" ToRole="tPersona" />
+        </EntityType>
+        <Association Name="fk_Departamento">
+          <End Type="PruebaAlmaModel.tDepartamento" Role="tDepartamento" Multiplicity="0..1" />
+          <End Type="PruebaAlmaModel.tPersona" Role="tPersona" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="tDepartamento">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="tPersona">
+              <PropertyRef Name="IdDepartamento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PruebaAlmaModelStoreContainer" CdmEntityContainer="AlmacenesEntities">
+          <EntitySetMapping Name="tCargo">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tCargo">
+              <MappingFragment StoreEntitySet="tCargo">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tDetalleMaterial">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tDetalleMaterial">
+              <MappingFragment StoreEntitySet="tDetalleMaterial">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="IdUnidad" ColumnName="IdUnidad" />
+                <ScalarProperty Name="IdMaterial" ColumnName="IdMaterial" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tDetalleSolicitud">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tDetalleSolicitud">
+              <MappingFragment StoreEntitySet="tDetalleSolicitud">
+                <ScalarProperty Name="Especificacion" ColumnName="Especificacion" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Idsolicitud" ColumnName="Idsolicitud" />
+                <ScalarProperty Name="IdDetalleMaterial" ColumnName="IdDetalleMaterial" />
+                <ScalarProperty Name="CantidadSolicitada" ColumnName="CantidadSolicitada" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="CantidadAprobada" ColumnName="CantidadAprobada" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tMaterial">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tMaterial">
+              <MappingFragment StoreEntitySet="tMaterial">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Idunidad" ColumnName="Idunidad" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tPersona">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tPersona">
+              <MappingFragment StoreEntitySet="tPersona">
+                <ScalarProperty Name="IdDepartamento" ColumnName="IdDepartamento" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Paterno" ColumnName="Paterno" />
+                <ScalarProperty Name="Materno" ColumnName="Materno" />
+                <ScalarProperty Name="Documento" ColumnName="Documento" />
+                <ScalarProperty Name="FechaNac" ColumnName="FechaNac" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Idcargo" ColumnName="Idcargo" />
+                <ScalarProperty Name="Idsuperior" ColumnName="Idsuperior" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tReseteoContraseña">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tReseteoContraseña">
+              <MappingFragment StoreEntitySet="tReseteoContraseña">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Token" ColumnName="Token" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tSolicitud">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tSolicitud">
+              <MappingFragment StoreEntitySet="tSolicitud">
+                <ScalarProperty Name="FechaRespuesta" ColumnName="FechaRespuesta" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Respuesta" ColumnName="Respuesta" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="Idusuario" ColumnName="Idusuario" />
+                <ScalarProperty Name="Idtiposolicitud" ColumnName="Idtiposolicitud" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tTipo">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tTipo">
+              <MappingFragment StoreEntitySet="tTipo">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tTipoSolicitud">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tTipoSolicitud">
+              <MappingFragment StoreEntitySet="tTipoSolicitud">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tUnidad">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tUnidad">
+              <MappingFragment StoreEntitySet="tUnidad">
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tUsuario">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tUsuario">
+              <MappingFragment StoreEntitySet="tUsuario">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Nomusu" ColumnName="Nomusu" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="IdTtipo" ColumnName="IdTtipo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tDepartamento">
+            <EntityTypeMapping TypeName="PruebaAlmaModel.tDepartamento">
+              <MappingFragment StoreEntitySet="tDepartamento">
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
